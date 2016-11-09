@@ -97,8 +97,8 @@ public class SafetyPlugin implements PluginBase, ConstraintsInterface {
         if (profile == null) return absoluteRate;
         if (absoluteRate < 0) absoluteRate = 0d;
 
-        Integer maxBasalMult = 4;
-        Integer maxBasalFromDaily = 3;
+        Integer maxBasalMult = 8;
+        Integer maxBasalFromDaily = 6;
         // Check percentRate but absolute rate too, because we know real current basal in pump
         Double origRate = absoluteRate;
         if (absoluteRate > maxBasal) {
@@ -136,8 +136,8 @@ public class SafetyPlugin implements PluginBase, ConstraintsInterface {
 
         if (absoluteRate < 0) absoluteRate = 0d;
 
-        Integer maxBasalMult = 4;
-        Integer maxBasalFromDaily = 3;
+        Integer maxBasalMult = 8;
+        Integer maxBasalFromDaily = 6;
         // Check percentRate but absolute rate too, because we know real current basal in pump
         Double origRate = absoluteRate;
         if (absoluteRate > maxBasal) {

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="actions">AC</string>
+    <string name="app_name">AndroidAPS</string>
+    <string name="configbuilder">Conf</string>
+    <string name="openapsma">oAPS</string>
+    <string name="overview">ov</string>
+    <string name="profileviewer">NS</string>
+    <string name="tempbasals">Tmps</string>
+    <string name="careportal">CP</string>
+    <string name="danarpump">Dana</string>
+    <string name="circadian_percentage_profile">CPP</string>
+</resources>
