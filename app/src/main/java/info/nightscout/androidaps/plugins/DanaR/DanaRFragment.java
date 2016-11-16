@@ -30,6 +30,7 @@ import info.nightscout.androidaps.events.EventTempBasalChange;
 import info.nightscout.androidaps.interfaces.FragmentBase;
 import info.nightscout.androidaps.plugins.DanaR.Dialogs.ProfileViewDialog;
 import info.nightscout.androidaps.plugins.DanaR.History.DanaRHistoryActivity;
+import info.nightscout.androidaps.plugins.DanaR.History.DanaRStatsActivity;
 import info.nightscout.androidaps.plugins.DanaR.events.EventDanaRConnectionStatus;
 import info.nightscout.androidaps.plugins.DanaR.events.EventDanaRNewStatus;
 import info.nightscout.utils.DecimalFormatter;
@@ -116,6 +117,15 @@ public class DanaRFragment extends Fragment implements FragmentBase {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getContext(), DanaRHistoryActivity.class));
+
+            }
+        });
+
+        historyButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                startActivity(new Intent(getContext(), DanaRStatsActivity.class));
+                return true;
             }
         });
 
