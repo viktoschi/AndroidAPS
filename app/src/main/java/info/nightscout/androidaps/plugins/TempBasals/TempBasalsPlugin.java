@@ -28,7 +28,7 @@ import info.nightscout.androidaps.events.EventPreferenceChange;
 import info.nightscout.androidaps.events.EventTempBasalChange;
 import info.nightscout.androidaps.interfaces.PluginBase;
 import info.nightscout.androidaps.interfaces.TempBasalsInterface;
-import info.nightscout.androidaps.plugins.OpenAPSMA.IobTotal;
+import info.nightscout.androidaps.data.IobTotal;
 
 /**
  * Created by mike on 05.08.2016.
@@ -197,10 +197,10 @@ public class TempBasalsPlugin implements PluginBase, TempBasalsInterface {
     }
 
     @Override
-    public void updateTotalIOB() {
+    public IobTotal getCalculationToTime(long time) {
         checkForExpired(tempBasals);
         checkForExpired(extendedBoluses);
-        Date now = new Date();
+        Date now = new Date(time);
         IobTotal total = new IobTotal();
         for (Integer pos = 0; pos < tempBasals.size(); pos++) {
             TempBasal t = tempBasals.get(pos);
@@ -214,6 +214,13 @@ public class TempBasalsPlugin implements PluginBase, TempBasalsInterface {
                 total.plus(calc);
             }
         }
+        return total;
+    }
+
+    @Override
+    public void updateTotalIOB() {
+        IobTotal total = getCalculationToTime(new Date().getTime());
+
         lastCalculationTimestamp = new Date().getTime();
         lastCalculation = total;
     }
