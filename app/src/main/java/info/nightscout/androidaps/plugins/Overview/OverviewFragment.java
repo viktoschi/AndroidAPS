@@ -49,9 +49,9 @@ import info.nightscout.androidaps.Config;
 import info.nightscout.androidaps.Constants;
 import info.nightscout.androidaps.MainApp;
 import info.nightscout.androidaps.R;
+import info.nightscout.androidaps.data.GlucoseStatus;
 import info.nightscout.androidaps.data.PumpEnactResult;
 import info.nightscout.androidaps.db.BgReading;
-import info.nightscout.androidaps.db.DatabaseHelper;
 import info.nightscout.androidaps.db.TempBasal;
 import info.nightscout.androidaps.db.Treatment;
 import info.nightscout.androidaps.events.EventInitializationChanged;
@@ -69,7 +69,7 @@ import info.nightscout.androidaps.plugins.ConfigBuilder.ConfigBuilderPlugin;
 import info.nightscout.androidaps.plugins.Loop.LoopPlugin;
 import info.nightscout.androidaps.plugins.Loop.events.EventNewOpenLoopNotification;
 import info.nightscout.androidaps.plugins.Objectives.ObjectivesPlugin;
-import info.nightscout.androidaps.plugins.OpenAPSMA.IobTotal;
+import info.nightscout.androidaps.data.IobTotal;
 import info.nightscout.androidaps.plugins.Overview.Dialogs.NewTreatmentDialog;
 import info.nightscout.androidaps.plugins.Overview.Dialogs.WizardDialog;
 import info.nightscout.androidaps.plugins.Overview.graphExtensions.PointsWithLabelGraphSeries;
@@ -214,7 +214,7 @@ public class OverviewFragment extends Fragment {
         acceptTempButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainApp.getConfigBuilder().getActiveLoop().invoke(false);
+                MainApp.getConfigBuilder().getActiveLoop().invoke("Accept temp button", false);
                 final LoopPlugin.LastRun finalLastRun = LoopPlugin.lastRun;
                 if (finalLastRun != null && finalLastRun.lastAPSRun != null && finalLastRun.constraintsProcessed.changeRequested) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -513,8 +513,8 @@ public class OverviewFragment extends Fragment {
             acceptTempLayout.setVisibility(View.GONE);
         }
 
+        TempBasal activeTemp = pump.getTempBasal();
         if (pump.isTempBasalInProgress()) {
-            TempBasal activeTemp = pump.getTempBasal();
             cancelTempLayout.setVisibility(View.VISIBLE);
             cancelTempButton.setText(MainApp.instance().getString(R.string.cancel) + ": " + activeTemp.toString());
             runningTempView.setVisibility(View.VISIBLE);
@@ -578,10 +578,11 @@ public class OverviewFragment extends Fragment {
         if (lastBG != null && bgView != null) {
             bgView.setText(lastBG.valueToUnitsToString(profile.getUnits()));
             arrowView.setText(lastBG.directionToSymbol());
-            DatabaseHelper.GlucoseStatus glucoseStatus = MainApp.getDbHelper().getGlucoseStatusData();
+            GlucoseStatus glucoseStatus = GlucoseStatus.getGlucoseStatusData();
             if (glucoseStatus != null){
                 deltaView.setText("Δ " + NSProfile.toUnitsString(glucoseStatus.delta, glucoseStatus.delta * Constants.MGDL_TO_MMOLL, units) + " " + units);
-                avgdeltaView.setText("øΔ " + NSProfile.toUnitsString(glucoseStatus.avgdelta, glucoseStatus.avgdelta * Constants.MGDL_TO_MMOLL, units) + " " + units);
+                avgdeltaView.setText("øΔ15m: " + NSProfile.toUnitsString(glucoseStatus.short_avgdelta, glucoseStatus.short_avgdelta * Constants.MGDL_TO_MMOLL, units) +
+                        "  øΔ40m: " + NSProfile.toUnitsString(glucoseStatus.long_avgdelta, glucoseStatus.long_avgdelta * Constants.MGDL_TO_MMOLL, units));
             }
 
             BgReading.units = profile.getUnits();
@@ -708,7 +709,7 @@ public class OverviewFragment extends Fragment {
         bgGraph.getGridLabelRenderer().setNumHorizontalLabels(7); // only 7 because of the space
 
         // **** BG graph ****
-        List<BgReading> bgReadingsArray = MainApp.getDbHelper().getDataFromTime(fromTime);
+        List<BgReading> bgReadingsArray = MainApp.getDbHelper().getDataFromTime(fromTime, true);
         List<BgReading> inRangeArray = new ArrayList<BgReading>();
         List<BgReading> outOfRangeArray = new ArrayList<BgReading>();
 
