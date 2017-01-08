@@ -284,7 +284,7 @@ var determine_basal = function determine_basal(glucose_status, currenttemp, iob_
         var rate = profile.current_basal + (2 * insulinReq);
         rate = Math.round( rate * 1000 ) / 1000;
 
-            var maxSafeBasal = Math.min(profile.max_basal, 3 * profile.max_daily_basal, 4 * profile.current_basal);
+            var maxSafeBasal = Math.min(profile.max_basal, 6 * profile.max_daily_basal, 8 * profile.current_basal);
         if (rate > maxSafeBasal) {
             rT.reason += "adj. req. rate:"+rate.toFixed(1) +" to maxSafeBasal:"+maxSafeBasal.toFixed(1)+", ";
             rate = maxSafeBasal;
