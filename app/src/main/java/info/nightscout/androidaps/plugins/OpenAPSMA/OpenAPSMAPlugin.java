@@ -177,8 +177,8 @@ public class OpenAPSMAPlugin implements PluginBase, APSInterface {
         maxIob = MainApp.getConfigBuilder().applyMaxIOBConstraints(maxIob);
 
         minBg = verifyHardLimits(minBg, "minBg", 72, 180);
-        maxBg = verifyHardLimits(maxBg, "maxBg", 100, 270);
-        targetBg = verifyHardLimits(targetBg, "targetBg", 80, 200);
+        maxBg = verifyHardLimits(maxBg, "maxBg", 80, 270);
+        targetBg = verifyHardLimits(targetBg, "targetBg", 72, 200);
         maxIob = verifyHardLimits(maxIob, "maxIob", 0, 7);
         maxBasal = verifyHardLimits(maxBasal, "max_basal", 0.1, 10);
 
