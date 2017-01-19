@@ -429,4 +429,5 @@
     <string name="danar_stats_skipMessageCheckbox">Please do not show again</string>
     <string name="danar_stats_skipMessage">Possibly inaccurate if using boluses for priming/filling!</string>
     <string name="initializing">Initializing ...</string>
+    <string name="careportal_temptarget">Temporary Target</string>
 </resources>

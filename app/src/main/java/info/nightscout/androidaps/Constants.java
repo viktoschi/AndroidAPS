@@ -53,4 +53,12 @@ public class Constants {
     public static final int[] VERY_HARD_LIMIT_TEMP_MIN_BG = {72,180};
     public static final int[] VERY_HARD_LIMIT_TEMP_MAX_BG = {72,270};
     public static final int[] VERY_HARD_LIMIT_TEMP_TARGET_BG = {72,200};
+
+    public static final String MAX_BG_DEFAULT_MGDL = "180";
+    public static final String MAX_BG_DEFAULT_MMOL = "10";
+    public static final String MIN_BG_DEFAULT_MGDL = "100";
+    public static final String MIN_BG_DEFAULT_MMOL = "5";
+    public static final String TARGET_BG_DEFAULT_MGDL = "150";
+    public static final String TARGET_BG_DEFAULT_MMOL = "7";
+
 }
