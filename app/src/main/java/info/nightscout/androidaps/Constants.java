@@ -30,16 +30,35 @@ public class Constants {
 
 
     // AMA
-    public static final int MAX_DAILY_SAFETY_MULTIPLIER = 3;
-    public static final int CURRENT_BASAL_SAFETY_MULTIPLIER = 4;
+    public static final int MAX_DAILY_SAFETY_MULTIPLIER = 6;
+    public static final int CURRENT_BASAL_SAFETY_MULTIPLIER = 8;
 
     public static final int BOLUSSNOOZE_DIA_ADVISOR = 2;
     public static final double AUTOSENS_MAX = 1.2d;
     public static final double AUTOSENS_MIN = 0.7d;
-    public static final boolean AUTOSENS_ADJUST_TARGETS = false;
+    public static final boolean AUTOSENS_ADJUST_TARGETS = true;
     public static final double MIN_5M_CARBIMPACT = 3d;
 
     // Circadian Percentage Profile
     public static final int CPP_MIN_PERCENTAGE = 50;
     public static final int CPP_MAX_PERCENTAGE = 200;
+
+
+    public static final String MAX_BG_DEFAULT_MGDL = "180";
+    public static final String MAX_BG_DEFAULT_MMOL = "10";
+    public static final String MIN_BG_DEFAULT_MGDL = "100";
+    public static final String MIN_BG_DEFAULT_MMOL = "5";
+    public static final String TARGET_BG_DEFAULT_MGDL = "150";
+    public static final String TARGET_BG_DEFAULT_MMOL = "7";
+
+    // Very Hard Limits Ranges
+    // First value is the Lowest and second value is the Highest a Limit can define
+    public static final int[] VERY_HARD_LIMIT_MIN_BG = {72,180};
+    public static final int[] VERY_HARD_LIMIT_MAX_BG = {80,270};
+    public static final int[] VERY_HARD_LIMIT_TARGET_BG = {72,200};
+
+    // Very Hard Limits Ranges for Temp Targets
+    public static final int[] VERY_HARD_LIMIT_TEMP_MIN_BG = {72,180};
+    public static final int[] VERY_HARD_LIMIT_TEMP_MAX_BG = {72,270};
+    public static final int[] VERY_HARD_LIMIT_TEMP_TARGET_BG = {72,200};
 }
