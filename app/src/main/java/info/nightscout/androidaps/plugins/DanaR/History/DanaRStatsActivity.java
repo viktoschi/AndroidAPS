@@ -138,7 +138,7 @@ public class DanaRStatsActivity extends Activity {
         totalBaseBasal = (EditText) findViewById(R.id.danar_stats_editTotalBaseBasal);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        TBB = preferences.getString("TBB", "18");
+        TBB = preferences.getString("TBB", "10");
         totalBaseBasal.setHint(TBB);
         totalBaseBasal.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
@@ -305,26 +305,28 @@ public class DanaRStatsActivity extends Activity {
                 cleanTable(etl);
                 DateFormat df = new SimpleDateFormat("dd.MM.");
 
-                if(TextUtils.isEmpty(TBB)) {
-                    totalBaseBasal.setError("Please Enter Total Base Basal");
-                    return;
-                }
-                else {
-                    magicNumber = Double.parseDouble(TBB);
-                }
 
                 ProfileInterface pi = ConfigBuilderPlugin.getActiveProfile();
                 if (pi instanceof CircadianPercentageProfilePlugin){
                     magicNumber = ((CircadianPercentageProfilePlugin)pi).baseBasalSum();
+                    magicNumber *=2;
                     DecimalFormat decimalFormat = new DecimalFormat("####0.000");
                     totalBaseBasal.setHint(decimalFormat.format(magicNumber));
                     totalBaseBasal.setEnabled(false);
                     totalBaseBasal.setClickable(false);
                     totalBaseBasal.setFocusable(false);
                     totalBaseBasal.setInputType(0);
-                }
+                } else {
 
-                magicNumber *=2;
+                    if(TextUtils.isEmpty(TBB)) {
+                        totalBaseBasal.setError("Please Enter Total Base Basal");
+                        return;
+                    }
+                    else {
+                        magicNumber = Double.parseDouble(TBB);
+                    }
+
+                }
 
                 int i = 0;
                 double sum = 0d;
