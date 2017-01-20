@@ -89,7 +89,7 @@
     <string name="nsprofileview_basal_label">Bazál:</string>
     <string name="nsprofileview_dia_label">Trvání inzulínu:</string>
     <string name="nsprofileview_ic_label">Inzulínosacharidový poměr:</string>
-    <string name="nsprofileview_noprofile_text">ŽÁDNÝ PROFIL NENASTAVEN</string>
+    <string name="noprofileset">ŽÁDNÝ PROFIL NENASTAVEN</string>
     <string name="nsprofileview_target_label">Cíl:</string>
     <string name="nsprofileview_units_label">Jednotky:</string>
     <string name="objectives">Cíle</string>
@@ -124,7 +124,7 @@
     <string name="objectives_pumpstatusavailableinns">Stav pumpy dostupný v NS</string>
     <string name="rate">Hodnota</string>
     <string name="reason">Zdůvodnění</string>
-    <string name="refreshfromnightscout">Opravdu aktualizovat ošetření z NS</string>
+    <string name="refreshtreatmentsfromnightscout">Opravdu aktualizovat ošetření z NS</string>
     <string name="safety">Bezpečnost</string>
     <string name="danar_useextended_title">Použít kombo bolusy pro >200%</string>
     <string name="setextendedbolusquestion">Spustit nový kombo bolus:</string>
@@ -237,7 +237,7 @@
     <string name="careportal_temporarytarget">Dočasný cíl</string>
     <string name="careportal_temporarytargetcancel">Dočasný cíl konec</string>
     <string name="glucosetype_finger">Glukoměr</string>
-    <string name="glucosetype_manual">Jiný</string>
+    <string name="manual">Jiný</string>
     <string name="glucosetype_sensor">Senzor</string>
     <string name="danarprofile">DanaR profil</string>
     <string name="danarprofile_car">Rychlost absorbce sacharidů</string>
@@ -385,4 +385,21 @@
     <string name="ongoingnotificaction">Průběžné oznámení</string>
     <string name="old_data">ZASTARALÉ</string>
     <string name="localprofile">Místní profil</string>
+    <string name="activity">Aktivita</string>
+    <string name="array_of_elements">Pole %d prvků. Aktuální hodnota:</string>
+    <string name="careportal_temptarget"></string>
+    <string name="eatingsoon">Před jídlem</string>
+    <string name="el_lang">Řečtina</string>
+    <string name="initializing">Inicializuji ...</string>
+    <string name="long_avgdelta">Dlouhodobý průměr</string>
+    <string name="openapsama">OpenAPS AMA</string>
+    <string name="openapsama_useautosens">Používat autodetekci senzitivity</string>
+    <string name="openapsma_autosensdata_label">Data detekce senzitivity</string>
+    <string name="openapsma_scriptdebugdata_label">Ladící informace</string>
+    <string name="openapsma_valuelimitedto" formatted="false">%.2f omezeno na %.2f</string>
+    <string name="refreshtemptargetsfromnightscout">Opravdu aktualizovat dočasné cíle z NS</string>
+    <string name="removerecord">Odstranit záznam:</string>
+    <string name="short_avgdelta">Krátkodobý průměr</string>
+    <string name="temptargetrange">Dočasný cíl</string>
+    <string name="temptargetrange_refreshfromnightscout">Obnovit dočasné cíle z NS</string>
 </resources>

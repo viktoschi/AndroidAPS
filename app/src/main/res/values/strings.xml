@@ -27,7 +27,7 @@
     <string name="nsprofileview_isf_label">ISF:</string>
     <string name="nsprofileview_basal_label">Basal:</string>
     <string name="nsprofileview_target_label">Target:</string>
-    <string name="nsprofileview_noprofile_text">NO PROFILE SET</string>
+    <string name="noprofileset">NO PROFILE SET</string>
     <string name="treatments_insulin_label_string">Insulin:</string>
     <string name="treatments_carbs_label_string">Carbs:</string>
     <string name="treatments_iob_label_string">IOB:</string>
@@ -107,7 +107,8 @@
     <string name="loop_constraintsprocessed_label">After processed constraints</string>
     <string name="loop_setbypump_label">Set by pump</string>
     <string name="openapsma_lastenact_label">Last enacted</string>
-    <string name="refreshfromnightscout">Do you want to refresh treatments from Nightscout</string>
+    <string name="refreshtreatmentsfromnightscout">Do you want to refresh treatments from Nightscout</string>
+    <string name="refreshtemptargetsfromnightscout">Do you want to refresh temp targets from Nightscout</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="noapsselected">NO APS SELECTED OR PROVIDED RESULT</string>
@@ -206,6 +207,7 @@
     <string name="nav_import">Import settings</string>
     <string name="de_lang">German</string>
     <string name="es_lang">Spanish</string>
+    <string name="el_lang">Greek</string>
     <string name="openapsma_low_summary">The minimum BG value to be in range.</string>
     <string name="openapsma_high_summary">The maximum BG value to be in range.</string>
     <string name="openapsma_maxbasal_summary">Max U/hr a Temp Basal can be set to</string>
@@ -256,7 +258,7 @@
     <string name="smscommunicator_remotebolusnotallowed">Remote bolus not allowed</string>
     <string name="glucosetype_finger">Finger</string>
     <string name="glucosetype_sensor">Sensor</string>
-    <string name="glucosetype_manual">Manual</string>
+    <string name="manual">Manual</string>
     <string name="careportal_temporarytarget">Temporary Target</string>
     <string name="careportal_temporarytargetcancel">Temporary Target Cancel</string>
     <string name="danarprofile">DanaR profile settings</string>
@@ -317,6 +319,7 @@
     <string name="smscommunicator_loophasbeenenabled">Loop has been enabled</string>
     <string name="smscommunicator_loopisdisabled">Loop is disabled</string>
     <string name="smscommunicator_loopisenabled">Loop is enabled</string>
+    <string name="openapsma_valuelimitedto" formatted="false">%.2f limited to %.2f</string>
     <string name="openapsma_valueoutofrange" formatted="false">Value %s is out of hard limits</string>
     <string name="smscommunicator_remotebasalnotallowed">Remote basal setting is not allowed</string>
     <string name="smscommunicator_basalreplywithcode" formatted="false">To start basal %.2fU/h reply with code %s</string>
@@ -397,4 +400,31 @@
     <string name="minago">%dmin ago</string>
     <string name="sms_minago">%dmin ago</string>
     <string name="localprofile">Local Profile</string>
+    <string name="openapsama">OpenAPS AMA</string>
+    <string name="short_avgdelta">Short avg. delta</string>
+    <string name="long_avgdelta">Long avg. delta</string>
+    <string name="array_of_elements">Array of %d elements.\nActual value:</string>
+    <string name="openapsma_autosensdata_label">Autosens data</string>
+    <string name="openapsma_scriptdebugdata_label">Script debug</string>
+    <string name="openapsama_useautosens">Use AMA autosens feature</string>
+    <string name="temptargetrange">Temp Target</string>
+    <string name="temptargetrange_refreshfromnightscout">Refresh temp targets from NS</string>
+    <string name="eatingsoon">Eating Soon</string>
+    <string name="activity">Activity</string>
+    <string name="removerecord">Remove record:</string>
+    <string name="danar_stats">DanaR Stats</string>
+    <string name="danar_stats_cumulative_tdd">Cumulative TDD</string>
+    <string name="danar_stats_expweight">Exponentially Weighted TDD</string>
+    <string name="danar_stats_basalrate">Basal</string>
+    <string name="danar_stats_bolus">Bolus</string>
+    <string name="danar_stats_tdd">TDD</string>
+    <string name="danar_stats_date">Date</string>
+    <string name="danar_stats_ratio">Ratio</string>
+    <string name="danar_stats_amount_days"># Days</string>
+    <string name="danar_stats_weight">Weight</string>
+    <string name="danar_stats_warning_Message">Possibly inaccurate if using boluses for priming/filling!</string>
+    <string name="danar_stats_olddata_Message">Old Data Please Press "RELOAD"</string>
+    <string name="danar_stats_tbb">Total Base Basal</string>
+    <string name="danar_stats_tbb2">Total Base Basal ²</string>
+    <string name="initializing">Initializing ...</string>
 </resources>
