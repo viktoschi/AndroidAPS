@@ -17,6 +17,8 @@ import info.nightscout.client.data.NSProfile;
 public interface PumpInterface {
 
     boolean isInitialized();
+    boolean isSuspended();
+    boolean isBusy();
 
     boolean isTempBasalInProgress();
     boolean isExtendedBoluslInProgress();
@@ -51,4 +53,6 @@ public interface PumpInterface {
     String deviceID();
 
     PumpDescription getPumpDescription();
+
+    public String shortStatus(boolean veryShort);
 }

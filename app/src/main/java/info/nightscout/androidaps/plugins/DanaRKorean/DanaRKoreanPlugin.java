@@ -85,7 +85,7 @@ public class DanaRKoreanPlugin implements PluginBase, PumpInterface, Constraints
         pumpDescription.bolusStep = 0.1d;
 
         pumpDescription.isExtendedBolusCapable = true;
-        pumpDescription.extendedBolusStep = 0.1d;
+        pumpDescription.extendedBolusStep = 0.05d;
 
         pumpDescription.isTempBasalCapable = true;
         pumpDescription.lowTempBasalStyle = PumpDescription.PERCENT;
@@ -209,6 +209,17 @@ public class DanaRKoreanPlugin implements PluginBase, PumpInterface, Constraints
     @Override
     public boolean isInitialized() {
         return getDanaRPump().lastConnection.getTime() > 0 && !getDanaRPump().isConfigUD && !getDanaRPump().isEasyModeEnabled && getDanaRPump().isExtendedBolusEnabled;
+    }
+
+    @Override
+    public boolean isSuspended() {
+        return false;
+    }
+
+    @Override
+    public boolean isBusy() {
+        if (sExecutionService == null) return false;
+        return sExecutionService.isConnected() || sExecutionService.isConnecting();
     }
 
     // Pump interface
@@ -828,7 +839,7 @@ public class DanaRKoreanPlugin implements PluginBase, PumpInterface, Constraints
     }
 
     // Reply for sms communicator
-    public String shortStatus() {
+    public String shortStatus(boolean veryShort) {
         String ret = "";
         if (getDanaRPump().lastConnection.getTime() != 0) {
             Long agoMsec = new Date().getTime() - getDanaRPump().lastConnection.getTime();
@@ -843,6 +854,9 @@ public class DanaRKoreanPlugin implements PluginBase, PumpInterface, Constraints
         }
         if (isExtendedBoluslInProgress()) {
             ret += "Extended: " + getExtendedBolus().toString() + "\n";
+        }
+        if (!veryShort){
+            ret += "TDD: " + DecimalFormatter.to0Decimal(getDanaRPump().dailyTotalUnits) + " / " + getDanaRPump().maxDailyTotalUnits + " U\n";
         }
         ret += "IOB: " + getDanaRPump().iob + "U\n";
         ret += "Reserv: " + DecimalFormatter.to0Decimal(getDanaRPump().reservoirRemainingUnits) + "U\n";

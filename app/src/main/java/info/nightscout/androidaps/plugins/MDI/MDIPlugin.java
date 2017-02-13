@@ -116,6 +116,16 @@ public class MDIPlugin implements PluginBase, PumpInterface {
     }
 
     @Override
+    public boolean isSuspended() {
+        return false;
+    }
+
+    @Override
+    public boolean isBusy() {
+        return false;
+    }
+
+    @Override
     public boolean isTempBasalInProgress() {
         return false;
     }
@@ -270,6 +280,11 @@ public class MDIPlugin implements PluginBase, PumpInterface {
     @Override
     public PumpDescription getPumpDescription() {
         return pumpDescription;
+    }
+
+    @Override
+    public String shortStatus(boolean veryShort) {
+        return deviceID();
     }
 
 }
