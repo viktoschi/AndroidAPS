@@ -9,7 +9,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 import info.nightscout.androidaps.R;
+import info.nightscout.androidaps.interaction.utils.PlusMinusEditText;
+import info.nightscout.androidaps.interaction.utils.SafeParse;
 
 /**
  * Created by adrian on 13/02/17.

@@ -19,6 +19,11 @@
             android:src="@drawable/ic_action_add"
             android:tint="#ffffff" />
 
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
         <EditText
             android:id="@+id/amountfield"
             android:layout_width="match_parent"
@@ -29,8 +34,20 @@
             android:inputType="numberDecimal"
             android:minWidth="50dp"
             android:padding="10dp"
-            android:text="112"
             android:textSize="45sp" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="label"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center"
+            android:textSize="25sp"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/minusbutton"
