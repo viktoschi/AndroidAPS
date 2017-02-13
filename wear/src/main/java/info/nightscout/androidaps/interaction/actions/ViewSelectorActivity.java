@@ -43,8 +43,8 @@ public class ViewSelectorActivity extends Activity {
             final EditText editText = (EditText) view.findViewById(R.id.amountfield);
             editText.setHint(labelText);
         } else {
-            final EditText editText = (EditText) view.findViewById(R.id.amountfield);
-            editText.setHint(labelText);
+            final TextView textView = (TextView) view.findViewById(R.id.label);
+            textView.setText(labelText);
         }
     }
 
