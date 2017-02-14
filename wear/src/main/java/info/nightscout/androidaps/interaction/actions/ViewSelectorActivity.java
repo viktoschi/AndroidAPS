@@ -9,11 +9,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
-
 import info.nightscout.androidaps.R;
-import info.nightscout.androidaps.interaction.utils.PlusMinusEditText;
-import info.nightscout.androidaps.interaction.utils.SafeParse;
+
 
 /**
  * Created by adrian on 13/02/17.
@@ -46,6 +43,16 @@ public class ViewSelectorActivity extends Activity {
         if (design == 4){
             final EditText editText = (EditText) view.findViewById(R.id.amountfield);
             editText.setHint(labelText);
+            if (labelText.equals("duration")) {
+                editText.setHint(labelText);
+                editText.setText("60");
+            } else if (labelText.equals("low")) {
+                editText.setHint(labelText);
+                editText.setText("100");
+            } else if (labelText.equals("high")) {
+                editText.setHint(labelText);
+                editText.setText("100");
+            }
         } else {
             final TextView textView = (TextView) view.findViewById(R.id.label);
             textView.setText(labelText);
