@@ -11,7 +11,7 @@ import java.util.Date;
 import info.nightscout.androidaps.MainApp;
 import info.nightscout.androidaps.data.Iob;
 import info.nightscout.androidaps.data.IobTotal;
-import info.nightscout.client.data.NSProfile;
+import info.nightscout.androidaps.plugins.NSClientInternal.data.NSProfile;
 import info.nightscout.utils.DateUtil;
 import info.nightscout.utils.DecimalFormatter;
 
@@ -59,11 +59,15 @@ public class TempBasal {
         if (profile == null)
             return result;
 
+        Double basalRate = profile.getBasal(profile.secondsFromMidnight(time));
+
+        if (basalRate == null)
+            return result;
+
         int realDuration = getRealDuration();
 
         if (realDuration > 0) {
             Double netBasalRate = 0d;
-            Double basalRate = profile.getBasal(profile.secondsFromMidnight(time));
             Double tempBolusSize = 0.05;
 
             if (isExtended) {

@@ -21,9 +21,10 @@ import info.nightscout.androidaps.db.TempBasal;
 import info.nightscout.androidaps.interfaces.PluginBase;
 import info.nightscout.androidaps.interfaces.PumpDescription;
 import info.nightscout.androidaps.interfaces.PumpInterface;
+import info.nightscout.androidaps.plugins.ConfigBuilder.ConfigBuilderPlugin;
 import info.nightscout.androidaps.plugins.Overview.events.EventOverviewBolusProgress;
 import info.nightscout.androidaps.plugins.VirtualPump.events.EventVirtualPumpUpdateGui;
-import info.nightscout.client.data.NSProfile;
+import info.nightscout.androidaps.plugins.NSClientInternal.data.NSProfile;
 import info.nightscout.utils.DateUtil;
 
 /**
@@ -36,6 +37,8 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
 
     public static Integer batteryPercent = 50;
     public static Integer reservoirInUnits = 50;
+
+    Date lastDataTime = new Date(0);
 
     boolean fragmentEnabled = true;
     boolean fragmentVisible = true;
@@ -149,6 +152,7 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
     @Override
     public int setNewBasalProfile(NSProfile profile) {
         // Do nothing here. we are using MainApp.getConfigBuilder().getActiveProfile().getProfile();
+        lastDataTime = new Date();
         return SUCCESS;
     }
 
@@ -158,18 +162,19 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
     }
 
     @Override
-    public Date lastStatusTime() {
-        return new Date();
+    public Date lastDataTime() {
+        return lastDataTime;
     }
 
     @Override
-    public void updateStatus(String reason) {
-        // do nothing
+    public void refreshDataFromPump(String reason) {
+        MainApp.getConfigBuilder().uploadDeviceStatus();
+        lastDataTime = new Date();
     }
 
     @Override
     public double getBaseBasalRate() {
-        NSProfile profile = MainApp.getConfigBuilder().getActiveProfile().getProfile();
+        NSProfile profile = ConfigBuilderPlugin.getActiveProfile().getProfile();
         if (profile == null)
             return defaultBasalValue;
         return profile.getBasal(profile.secondsFromMidnight());
@@ -182,7 +187,7 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
         if (getTempBasal().isAbsolute) {
             return getTempBasal().absolute;
         } else {
-            NSProfile profile = MainApp.getConfigBuilder().getActiveProfile().getProfile();
+            NSProfile profile = ConfigBuilderPlugin.getActiveProfile().getProfile();
             if (profile == null)
                 return defaultBasalValue;
             Double baseRate = profile.getBasal(profile.secondsFromMidnight());
@@ -193,12 +198,12 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
 
     @Override
     public TempBasal getTempBasal() {
-        return MainApp.getConfigBuilder().getActiveTempBasals().getTempBasal(new Date());
+        return ConfigBuilderPlugin.getActiveTempBasals().getTempBasal(new Date());
     }
 
     @Override
     public TempBasal getExtendedBolus() {
-        return MainApp.getConfigBuilder().getActiveTempBasals().getExtendedBolus(new Date());
+        return ConfigBuilderPlugin.getActiveTempBasals().getExtendedBolus(new Date());
     }
 
     @Override
@@ -210,7 +215,7 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
 
     @Override
     public TempBasal getTempBasal(Date time) {
-        return MainApp.getConfigBuilder().getActiveTempBasals().getTempBasal(time);
+        return ConfigBuilderPlugin.getActiveTempBasals().getTempBasal(time);
     }
 
     @Override
@@ -250,6 +255,7 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
         if (Config.logPumpComm)
             log.debug("Delivering treatment insulin: " + insulin + "U carbs: " + carbs + "g " + result);
         MainApp.bus().post(new EventVirtualPumpUpdateGui());
+        lastDataTime = new Date();
         return result;
     }
 
@@ -284,6 +290,7 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
         if (Config.logPumpComm)
             log.debug("Setting temp basal absolute: " + result);
         MainApp.bus().post(new EventVirtualPumpUpdateGui());
+        lastDataTime = new Date();
         return result;
     }
 
@@ -317,6 +324,7 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
         if (Config.logPumpComm)
             log.debug("Settings temp basal percent: " + result);
         MainApp.bus().post(new EventVirtualPumpUpdateGui());
+        lastDataTime = new Date();
         return result;
     }
 
@@ -348,6 +356,7 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
         if (Config.logPumpComm)
             log.debug("Setting extended bolus: " + result);
         MainApp.bus().post(new EventVirtualPumpUpdateGui());
+        lastDataTime = new Date();
         return result;
     }
 
@@ -374,6 +383,7 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
                 result.comment = MainApp.instance().getString(R.string.virtualpump_sqlerror);
             }
         }
+        lastDataTime = new Date();
         return result;
     }
 
@@ -398,6 +408,7 @@ public class VirtualPumpPlugin implements PluginBase, PumpInterface {
         if (Config.logPumpComm)
             log.debug("Canceling extended basal: " + result);
         MainApp.bus().post(new EventVirtualPumpUpdateGui());
+        lastDataTime = new Date();
         return result;
     }
 
