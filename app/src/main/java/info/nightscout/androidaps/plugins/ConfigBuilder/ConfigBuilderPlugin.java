@@ -52,11 +52,14 @@ import info.nightscout.androidaps.plugins.OpenAPSMA.DetermineBasalResultMA;
 import info.nightscout.androidaps.plugins.Overview.Dialogs.BolusProgressDialog;
 import info.nightscout.androidaps.plugins.Overview.Dialogs.BolusProgressHelperActivity;
 import info.nightscout.androidaps.plugins.Overview.Notification;
+import info.nightscout.androidaps.plugins.Overview.events.EventDismissBolusprogressIfRunning;
 import info.nightscout.androidaps.plugins.Overview.events.EventDismissNotification;
 import info.nightscout.androidaps.plugins.Overview.events.EventNewNotification;
-import info.nightscout.client.data.DbLogger;
-import info.nightscout.client.data.NSProfile;
+import info.nightscout.androidaps.plugins.NSClientInternal.data.DbLogger;
+import info.nightscout.androidaps.plugins.NSClientInternal.data.NSProfile;
+import info.nightscout.utils.BatteryLevel;
 import info.nightscout.utils.DateUtil;
+import info.nightscout.utils.SP;
 
 /**
  * Created by mike on 05.08.2016.
@@ -78,9 +81,6 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
     static public Integer nsClientVersionCode = 0;
 
     static ArrayList<PluginBase> pluginList;
-
-    private static final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
-    private static ScheduledFuture<?> scheduledPost = null;
 
     PowerManager.WakeLock mWakeLock;
 
@@ -270,7 +270,7 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
         // PluginBase.PUMP
         pluginsInCategory = MainApp.getSpecificPluginsList(PluginBase.PUMP);
         activePump = (PumpInterface) getTheOneEnabledInArray(pluginsInCategory, PluginBase.PUMP);
-        if (Config.logConfigBuilder)
+        if (Config.logConfigBuilder && activePump != null)
             log.debug("Selected pump interface: " + ((PluginBase) activePump).getName());
         for (PluginBase p : pluginsInCategory) {
             if (!p.getName().equals(((PluginBase) activePump).getName())) {
@@ -294,7 +294,7 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
         // PluginBase.TEMPBASAL
         pluginsInCategory = MainApp.getSpecificPluginsList(PluginBase.TEMPBASAL);
         activeTempBasals = (TempBasalsInterface) getTheOneEnabledInArray(pluginsInCategory, PluginBase.TEMPBASAL);
-        if (Config.logConfigBuilder)
+        if (Config.logConfigBuilder && activeTempBasals != null)
             log.debug("Selected tempbasal interface: " + ((PluginBase) activeTempBasals).getName());
         for (PluginBase p : pluginsInCategory) {
             if (!p.getName().equals(((PluginBase) activeTempBasals).getName())) {
@@ -338,27 +338,37 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
         */
     @Override
     public boolean isInitialized() {
-        return activePump.isInitialized();
+        if (activePump != null)
+            return activePump.isInitialized();
+        else return true;
     }
 
     @Override
     public boolean isSuspended() {
-        return activePump.isSuspended();
+        if (activePump != null)
+            return activePump.isSuspended();
+        else return false;
     }
 
     @Override
     public boolean isBusy() {
-        return activePump.isBusy();
+        if (activePump != null)
+            return activePump.isBusy();
+        else return false;
     }
 
     @Override
     public boolean isTempBasalInProgress() {
-        return activePump.isTempBasalInProgress();
+        if (activePump != null)
+            return activePump.isTempBasalInProgress();
+        else return false;
     }
 
     @Override
     public boolean isExtendedBoluslInProgress() {
-        return activePump.isExtendedBoluslInProgress();
+        if (activePump != null)
+            return activePump.isExtendedBoluslInProgress();
+        else return false;
     }
 
     @Override
@@ -379,93 +389,129 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
         if (isThisProfileSet(profile)) {
             log.debug("Correct profile already set");
             return NOT_NEEDED;
-        } else {
+        } else if (activePump != null) {
             return activePump.setNewBasalProfile(profile);
-        }
+        } else
+            return SUCCESS;
     }
 
     @Override
     public boolean isThisProfileSet(NSProfile profile) {
-        return activePump.isThisProfileSet(profile);
+        if (activePump != null)
+            return activePump.isThisProfileSet(profile);
+        else return true;
     }
 
     @Override
-    public Date lastStatusTime() {
-        return activePump.lastStatusTime();
+    public Date lastDataTime() {
+        if (activePump != null)
+            return activePump.lastDataTime();
+        else return new Date();
     }
 
     @Override
-    public void updateStatus(String reason) {
-        activePump.updateStatus(reason);
+    public void refreshDataFromPump(String reason) {
+        if (activePump != null)
+            activePump.refreshDataFromPump(reason);
     }
 
     @Override
     public double getBaseBasalRate() {
-        return activePump.getBaseBasalRate();
+        if (activePump != null)
+            return activePump.getBaseBasalRate();
+        else
+            return 0d;
     }
 
     @Override
     public double getTempBasalAbsoluteRate() {
-        return activePump.getTempBasalAbsoluteRate();
+        if (activePump != null)
+            return activePump.getTempBasalAbsoluteRate();
+        else
+            return 0d;
     }
 
     @Override
     public double getTempBasalRemainingMinutes() {
-        return activePump.getTempBasalRemainingMinutes();
+        if (activePump != null)
+            return activePump.getTempBasalRemainingMinutes();
+        else
+            return 0d;
     }
 
     @Override
     public TempBasal getTempBasal(Date time) {
-        return activePump.getTempBasal(time);
+        if (activePump != null)
+            return activePump.getTempBasal(time);
+        else
+            return null;
     }
 
     @Override
     public TempBasal getTempBasal() {
-        return activePump.getTempBasal();
+        if (activePump != null)
+            return activePump.getTempBasal();
+        else
+            return null;
     }
 
     @Override
     public TempBasal getExtendedBolus() {
-        return activePump.getExtendedBolus();
+        if (activePump != null)
+            return activePump.getExtendedBolus();
+        else
+            return null;
     }
 
     public PumpEnactResult deliverTreatmentFromBolusWizard(Context context, Double insulin, Integer carbs, Double glucose, String glucoseType, int carbTime, JSONObject boluscalc) {
         mWakeLock.acquire();
-        insulin = applyBolusConstraints(insulin);
-        carbs = applyCarbsConstraints(carbs);
+        PumpEnactResult result;
+        if (activePump != null) {
+            insulin = applyBolusConstraints(insulin);
+            carbs = applyCarbsConstraints(carbs);
 
-        BolusProgressDialog bolusProgressDialog = null;
-        if (context != null) {
-            bolusProgressDialog = new BolusProgressDialog();
-            bolusProgressDialog.setInsulin(insulin);
-            bolusProgressDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "BolusProgress");
-        }
-
-        MainApp.bus().post(new EventBolusRequested(insulin));
-
-        PumpEnactResult result = activePump.deliverTreatment(insulin, carbs, context);
-
-        BolusProgressDialog.bolusEnded = true;
-
-        if (bolusProgressDialog != null && BolusProgressDialog.running) {
-            try {
-                bolusProgressDialog.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace(); // TODO: handle this better
+            BolusProgressDialog bolusProgressDialog = null;
+            if (context != null) {
+                bolusProgressDialog = new BolusProgressDialog();
+                bolusProgressDialog.setInsulin(insulin);
+                bolusProgressDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "BolusProgress");
             }
-        }
 
-        if (result.success) {
+            MainApp.bus().post(new EventBolusRequested(insulin));
+
+            result = activePump.deliverTreatment(insulin, carbs, context);
+
+            BolusProgressDialog.bolusEnded = true;
+
+            MainApp.bus().post(new EventDismissBolusprogressIfRunning(result));
+
+            if (result.success) {
+                Treatment t = new Treatment();
+                t.insulin = result.bolusDelivered;
+                if (carbTime == 0)
+                    t.carbs = (double) result.carbsDelivered; // with different carbTime record will come back from nightscout
+                t.created_at = new Date();
+                t.mealBolus = result.carbsDelivered > 0;
+                MainApp.getDbHelper().create(t);
+                t.setTimeIndex(t.getTimeIndex());
+                t.carbs = (double) result.carbsDelivered;
+                uploadBolusWizardRecord(t, glucose, glucoseType, carbTime, boluscalc);
+            }
+        } else {
+            if (Config.logCongigBuilderActions)
+                log.debug("Creating treatment: " + insulin + " carbs: " + carbs);
             Treatment t = new Treatment();
-            t.insulin = result.bolusDelivered;
-            if (carbTime == 0)
-                t.carbs = (double) result.carbsDelivered; // with different carbTime record will come back from nightscout
+            t.insulin = insulin;
+            t.carbs = (double) carbs;
             t.created_at = new Date();
-            t.mealBolus = result.carbsDelivered > 0;
+            t.mealBolus = t.carbs > 0;
             MainApp.getDbHelper().create(t);
             t.setTimeIndex(t.getTimeIndex());
-            t.carbs = (double) result.carbsDelivered;
-            uploadBolusWizardRecord(t, glucose, glucoseType, carbTime, boluscalc);
+            t.sendToNSClient();
+            result = new PumpEnactResult();
+            result.success = true;
+            result.bolusDelivered = insulin;
+            result.carbsDelivered = carbs;
         }
         mWakeLock.release();
         return result;
@@ -478,48 +524,60 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
 
     public PumpEnactResult deliverTreatment(Double insulin, Integer carbs, Context context, boolean createTreatment) {
         mWakeLock.acquire();
-        insulin = applyBolusConstraints(insulin);
-        carbs = applyCarbsConstraints(carbs);
+        PumpEnactResult result;
+        if (activePump != null) {
+            insulin = applyBolusConstraints(insulin);
+            carbs = applyCarbsConstraints(carbs);
 
-        BolusProgressDialog bolusProgressDialog = null;
-        if (context != null ) {
-            bolusProgressDialog = new BolusProgressDialog();
-            bolusProgressDialog.setInsulin(insulin);
-            bolusProgressDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "BolusProgress");
-        } else {
-            Intent i = new Intent();
-            i.putExtra("insulin", insulin.doubleValue());
-            i.setClass(MainApp.instance(), BolusProgressHelperActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            MainApp.instance().startActivity(i);
-        }
-
-        MainApp.bus().post(new EventBolusRequested(insulin));
-
-        PumpEnactResult result = activePump.deliverTreatment(insulin, carbs, context);
-
-        BolusProgressDialog.bolusEnded = true;
-
-        if (bolusProgressDialog != null && BolusProgressDialog.running) {
-            try {
-                bolusProgressDialog.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace(); // TODO: handle this better
+            BolusProgressDialog bolusProgressDialog = null;
+            if (context != null) {
+                bolusProgressDialog = new BolusProgressDialog();
+                bolusProgressDialog.setInsulin(insulin);
+                bolusProgressDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "BolusProgress");
+            } else {
+                Intent i = new Intent();
+                i.putExtra("insulin", insulin.doubleValue());
+                i.setClass(MainApp.instance(), BolusProgressHelperActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                MainApp.instance().startActivity(i);
             }
-        }
 
-        if (Config.logCongigBuilderActions)
-            log.debug("deliverTreatment insulin: " + insulin + " carbs: " + carbs + " success: " + result.success + " enacted: " + result.enacted + " bolusDelivered: " + result.bolusDelivered);
+            MainApp.bus().post(new EventBolusRequested(insulin));
 
-        if (result.success && createTreatment) {
+            result = activePump.deliverTreatment(insulin, carbs, context);
+
+            BolusProgressDialog.bolusEnded = true;
+
+            MainApp.bus().post(new EventDismissBolusprogressIfRunning(result));
+
+            if (Config.logCongigBuilderActions)
+                log.debug("deliverTreatment insulin: " + insulin + " carbs: " + carbs + " success: " + result.success + " enacted: " + result.enacted + " bolusDelivered: " + result.bolusDelivered);
+
+            if (result.success && createTreatment) {
+                Treatment t = new Treatment();
+                t.insulin = result.bolusDelivered;
+                t.carbs = (double) result.carbsDelivered;
+                t.created_at = new Date();
+                t.mealBolus = t.carbs > 0;
+                MainApp.getDbHelper().create(t);
+                t.setTimeIndex(t.getTimeIndex());
+                t.sendToNSClient();
+            }
+        } else {
+            if (Config.logCongigBuilderActions)
+                log.debug("Creating treatment: " + insulin + " carbs: " + carbs);
             Treatment t = new Treatment();
-            t.insulin = result.bolusDelivered;
-            t.carbs = (double) result.carbsDelivered;
+            t.insulin = insulin;
+            t.carbs = (double) carbs;
             t.created_at = new Date();
             t.mealBolus = t.carbs > 0;
             MainApp.getDbHelper().create(t);
             t.setTimeIndex(t.getTimeIndex());
             t.sendToNSClient();
+            result = new PumpEnactResult();
+            result.success = true;
+            result.bolusDelivered = insulin;
+            result.carbsDelivered = carbs;
         }
         mWakeLock.release();
         return result;
@@ -682,7 +740,7 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
     public String deviceID() {
         if (activePump != null)
             return activePump.deviceID();
-        else return "Unknown";
+        else return "No Pump active!";
     }
 
     @Override
@@ -825,11 +883,6 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
         return maxIobAfterConstrain;
     }
 
-    @Subscribe
-    public void onStatusEvent(final EventNewBG ev) {
-        uploadDeviceStatus(120);
-    }
-
     public void uploadTempBasalStartAbsolute(Double absolute, double durationInMinutes) {
         try {
             Context context = MainApp.instance().getApplicationContext();
@@ -933,7 +986,7 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
         }
     }
 
-    public void doUploadDeviceStatus() {
+    public void uploadDeviceStatus() {
         DeviceStatus deviceStatus = new DeviceStatus();
         try {
             LoopPlugin.LastRun lastRun = LoopPlugin.lastRun;
@@ -966,37 +1019,25 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
                     requested.put("temp", "absolute");
                     deviceStatus.enacted.put("requested", requested);
                 }
+            } else {
+                log.debug("OpenAPS data too old to upload");
             }
             if (activePump != null) {
                 deviceStatus.device = "openaps://" + deviceID();
                 JSONObject pumpstatus = getJSONStatus();
                 if (pumpstatus != null) {
-                    deviceStatus.pump = getJSONStatus();
+                    deviceStatus.pump = pumpstatus;
                 }
-
-                deviceStatus.created_at = DateUtil.toISOString(new Date());
-
-                deviceStatus.sendToNSClient();
             }
+
+            int batteryLevel = BatteryLevel.getBatteryLevel();
+            deviceStatus.uploaderBattery = batteryLevel;
+
+            deviceStatus.created_at = DateUtil.toISOString(new Date());
+            deviceStatus.sendToNSClient();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    static public void uploadDeviceStatus(int sec) {
-        class PostRunnable implements Runnable {
-            public void run() {
-                MainApp.getConfigBuilder().doUploadDeviceStatus();
-                scheduledPost = null;
-            }
-        }
-        // prepare task for execution
-        // cancel waiting task to prevent sending multiple posts
-        if (scheduledPost != null)
-            scheduledPost.cancel(false);
-        Runnable task = new PostRunnable();
-        scheduledPost = worker.schedule(task, sec, TimeUnit.SECONDS);
-        log.debug("Scheduling devicestatus upload in " + sec + " sec");
     }
 
     public void uploadBolusWizardRecord(Treatment t, double glucose, String glucoseType, int carbTime, JSONObject boluscalc) {
@@ -1088,24 +1129,26 @@ public class ConfigBuilderPlugin implements PluginBase, PumpInterface, Constrain
     }
 
     public void uploadAppStart() {
-        Context context = MainApp.instance().getApplicationContext();
-        Bundle bundle = new Bundle();
-        bundle.putString("action", "dbAdd");
-        bundle.putString("collection", "treatments");
-        JSONObject data = new JSONObject();
-        try {
-            data.put("eventType", "Note");
-            data.put("created_at", DateUtil.toISOString(new Date()));
-            data.put("notes", MainApp.sResources.getString(R.string.androidaps_start));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (SP.getBoolean(R.string.key_ns_logappstartedevent, true)) {
+            Context context = MainApp.instance().getApplicationContext();
+            Bundle bundle = new Bundle();
+            bundle.putString("action", "dbAdd");
+            bundle.putString("collection", "treatments");
+            JSONObject data = new JSONObject();
+            try {
+                data.put("eventType", "Note");
+                data.put("created_at", DateUtil.toISOString(new Date()));
+                data.put("notes", MainApp.sResources.getString(R.string.androidaps_start));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            bundle.putString("data", data.toString());
+            Intent intent = new Intent(Intents.ACTION_DATABASE);
+            intent.putExtras(bundle);
+            intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            context.sendBroadcast(intent);
+            DbLogger.dbAdd(intent, data.toString(), ConfigBuilderPlugin.class);
         }
-        bundle.putString("data", data.toString());
-        Intent intent = new Intent(Intents.ACTION_DATABASE);
-        intent.putExtras(bundle);
-        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        context.sendBroadcast(intent);
-        DbLogger.dbAdd(intent, data.toString(), ConfigBuilderPlugin.class);
     }
 
 }

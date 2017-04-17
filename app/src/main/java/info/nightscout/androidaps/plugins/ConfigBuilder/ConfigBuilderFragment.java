@@ -16,10 +16,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.util.ArrayList;
 
 import info.nightscout.androidaps.MainApp;
 import info.nightscout.androidaps.R;
+import info.nightscout.androidaps.events.EventConfigBuilderChange;
 import info.nightscout.androidaps.events.EventRefreshGui;
 import info.nightscout.androidaps.interfaces.APSInterface;
 import info.nightscout.androidaps.interfaces.BgSourceInterface;
@@ -43,14 +47,17 @@ public class ConfigBuilderFragment extends Fragment implements FragmentBase {
 
     ListView bgsourceListView;
     ListView pumpListView;
+    TextView pumpLabel;
     ListView loopListView;
     TextView loopLabel;
     ListView treatmentsListView;
     ListView tempsListView;
+    TextView tempsLabel;
     ListView profileListView;
     ListView apsListView;
     TextView apsLabel;
     ListView constraintsListView;
+    TextView constraintsLabel;
     ListView generalListView;
     TextView nsclientVerView;
     TextView nightscoutVerView;
@@ -76,14 +83,17 @@ public class ConfigBuilderFragment extends Fragment implements FragmentBase {
         View view = inflater.inflate(R.layout.configbuilder_fragment, container, false);
         bgsourceListView = (ListView) view.findViewById(R.id.configbuilder_bgsourcelistview);
         pumpListView = (ListView) view.findViewById(R.id.configbuilder_pumplistview);
+        pumpLabel = (TextView) view.findViewById(R.id.configbuilder_pumplabel);
         loopListView = (ListView) view.findViewById(R.id.configbuilder_looplistview);
         loopLabel = (TextView) view.findViewById(R.id.configbuilder_looplabel);
         treatmentsListView = (ListView) view.findViewById(R.id.configbuilder_treatmentslistview);
         tempsListView = (ListView) view.findViewById(R.id.configbuilder_tempslistview);
+        tempsLabel = (TextView) view.findViewById(R.id.configbuilder_tempslabel);
         profileListView = (ListView) view.findViewById(R.id.configbuilder_profilelistview);
         apsListView = (ListView) view.findViewById(R.id.configbuilder_apslistview);
         apsLabel = (TextView) view.findViewById(R.id.configbuilder_apslabel);
         constraintsListView = (ListView) view.findViewById(R.id.configbuilder_constraintslistview);
+        constraintsLabel = (TextView) view.findViewById(R.id.configbuilder_constraintslabel);
         generalListView = (ListView) view.findViewById(R.id.configbuilder_generallistview);
         nsclientVerView = (TextView) view.findViewById(R.id.configbuilder_nsclientversion);
         nightscoutVerView = (TextView) view.findViewById(R.id.configbuilder_nightscoutversion);
@@ -112,6 +122,8 @@ public class ConfigBuilderFragment extends Fragment implements FragmentBase {
                     }, null);
                 }
             });
+        } else {
+            unlock.setVisibility(View.GONE);
         }
         return view;
     }
@@ -122,6 +134,8 @@ public class ConfigBuilderFragment extends Fragment implements FragmentBase {
         setListViewHeightBasedOnChildren(bgsourceListView);
         pumpDataAdapter = new PluginCustomAdapter(getContext(), R.layout.configbuilder_simpleitem, MainApp.getSpecificPluginsList(PluginBase.PUMP), PluginBase.PUMP);
         pumpListView.setAdapter(pumpDataAdapter);
+        if (MainApp.getSpecificPluginsList(PluginBase.PUMP).size() == 0)
+            pumpLabel.setVisibility(View.GONE);
         setListViewHeightBasedOnChildren(pumpListView);
         loopDataAdapter = new PluginCustomAdapter(getContext(), R.layout.configbuilder_simpleitem, MainApp.getSpecificPluginsList(PluginBase.LOOP), PluginBase.LOOP);
         loopListView.setAdapter(loopDataAdapter);
@@ -134,6 +148,8 @@ public class ConfigBuilderFragment extends Fragment implements FragmentBase {
         tempsDataAdapter = new PluginCustomAdapter(getContext(), R.layout.configbuilder_simpleitem, MainApp.getSpecificPluginsList(PluginBase.TEMPBASAL), PluginBase.TEMPBASAL);
         tempsListView.setAdapter(tempsDataAdapter);
         setListViewHeightBasedOnChildren(tempsListView);
+        if (MainApp.getSpecificPluginsList(PluginBase.TEMPBASAL).size() == 0)
+            tempsLabel.setVisibility(View.GONE);
         profileDataAdapter = new PluginCustomAdapter(getContext(), R.layout.configbuilder_simpleitem, MainApp.getSpecificPluginsListByInterface(ProfileInterface.class), PluginBase.PROFILE);
         profileListView.setAdapter(profileDataAdapter);
         setListViewHeightBasedOnChildren(profileListView);
@@ -145,6 +161,8 @@ public class ConfigBuilderFragment extends Fragment implements FragmentBase {
         constraintsDataAdapter = new PluginCustomAdapter(getContext(), R.layout.configbuilder_simpleitem, MainApp.getSpecificPluginsListByInterface(ConstraintsInterface.class), PluginBase.CONSTRAINTS);
         constraintsListView.setAdapter(constraintsDataAdapter);
         setListViewHeightBasedOnChildren(constraintsListView);
+        if (MainApp.getSpecificPluginsList(PluginBase.CONSTRAINTS).size() == 0)
+            constraintsLabel.setVisibility(View.GONE);
         generalDataAdapter = new PluginCustomAdapter(getContext(), R.layout.configbuilder_simpleitem, MainApp.getSpecificPluginsList(PluginBase.GENERAL), PluginBase.GENERAL);
         generalListView.setAdapter(generalDataAdapter);
         setListViewHeightBasedOnChildren(generalListView);
@@ -197,7 +215,9 @@ public class ConfigBuilderFragment extends Fragment implements FragmentBase {
                         onEnabledCategoryChanged(plugin, type);
                         configBuilderPlugin.storeSettings();
                         MainApp.bus().post(new EventRefreshGui(true));
+                        MainApp.bus().post(new EventConfigBuilderChange());
                         getPlugin().logPluginStatus();
+                        Answers.getInstance().logCustom(new CustomEvent("ConfigurationChange"));
                     }
                 });
 
